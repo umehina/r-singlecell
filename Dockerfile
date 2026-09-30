@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
 
-# ============================================================================
 # r-singlecell
 #
 # Reproducible R and Bioconductor environment for single-cell bioinformatics 
@@ -15,11 +14,9 @@
 # Base:
 #   R 4.6.1
 #   Bioconductor 3.23
-# ============================================================================
 
 ARG BASE_IMAGE=ghcr.io/bioconductor/bioconductor_docker:3.23-R-4.6.1
 FROM ${BASE_IMAGE}
-USER root
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -80,8 +77,6 @@ RUN mkdir -p /workspace && \
     chown rstudio:rstudio /workspace
 
 WORKDIR /workspace
-
-USER rstudio
 
 RUN R -q -e ' \
     pkgs <- c( \
@@ -145,4 +140,5 @@ LABEL org.opencontainers.image.title="r-singlecell" \
       io.github.umehina.r-singlecell.bioconductor-version="3.23" \
       io.github.umehina.r-singlecell.package-manager="pak"
 
-CMD ["R", "--vanilla"]
+# Init command for s6-overlay
+CMD ["/init"]
