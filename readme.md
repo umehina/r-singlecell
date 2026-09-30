@@ -1,21 +1,82 @@
 # r-singlecell
 
-A reproducible R environment for single-cell and bioinformatics workflows.
+R and Bioconductor environment for single-cell and bioinformatics workflows.
 
-## Apple Container
+The image is based on [`bioconductor/bioconductor_docker`](https://github.com/Bioconductor/bioconductor_docker) and includes commonly used packages for Seurat workflows, trajectory analysis, cell-cell communication, enrichment analysis, and visualization.
 
-Install [Apple Container](https://github.com/apple/container/releases) using the signed `.pkg`.
+## Quick start
+
+On macOS devices only:
+
+```bash
+# install podman (refer to official podman documentation)
+# replace `podman` with `docker` or `container` as appropriate.
+brew install podman
+
+# use more cpus and memory for heavy analysis.
+podman machine init --cpus 8 --memory 32768 --disk-size 32
+podman machine start
+```
 
 Pull the image:
 
-```zsh
-container image pull ghcr.io/umehina/r-singlecell:latest
+```bash
+podman pull ghcr.io/umehina/r-singlecell:latest
 ```
 
-Start an interactive R session:
+Start an RStudio session:
 
-```zsh
-container run --rm -it ghcr.io/umehina/r-singlecell:latest R --vanilla
+```bash
+podman run -d \
+  --name r-singlecell \
+  -c 8 -m 32g \
+  -p 8787:8787 \
+  -e PASSWORD='some_password' \
+  -v "/path/to/data:/workspace" \
+  ghcr.io/umehina/r-singlecell:latest
+```
+
+RStudio will be available on your web browser at `http://localhost:8787`. 
+
+When the image is run with rootless Podman, the Rocker/Bioconductor startup scripts may configure RStudio to use:
+
+```text
+Username: root
+Password: <value passed with PASSWORD>
+```
+
+For more information, refer to the [Bioconductor/bioconductor_docker](https://github.com/Bioconductor/bioconductor_docker) repository. 
+
+To start an interactive R session:
+
+```bash
+podman run --rm -it \
+  ghcr.io/umehina/r-singlecell:latest \
+  R --vanilla
+```
+
+To check the R version:
+
+```bash
+podman run --rm \
+  ghcr.io/umehina/r-singlecell:latest \
+  R --version
+```
+
+To check the RStudio Server version:
+
+```bash
+podman run --rm \
+  ghcr.io/umehina/r-singlecell:latest \
+  rstudio-server version
+```
+
+To check whether an R package is installed:
+
+```bash
+podman run --rm \
+  ghcr.io/umehina/r-singlecell:latest \
+  R -q -e 'packageVersion("Seurat")'
 ```
 
 ## Included packages
@@ -38,3 +99,7 @@ container run --rm -it ghcr.io/umehina/r-singlecell:latest R --vanilla
   - `R.utils`, `SeuratData`
 
 Additional packages are installed automatically as dependencies.
+
+## Acknowledgements
+
+Thanks to the [Bioconductor/bioconductor_docker](https://github.com/Bioconductor/bioconductor_docker) project for providing the `bioconductor` container upon which this project is based.
