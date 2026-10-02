@@ -54,6 +54,7 @@ RUN R -q -e ' \
         "bioc::glmGamPoi", \
         "bioc::clusterProfiler", \
         "bioc::org.Mm.eg.db", \
+        "bioc::org.Hs.eg.db", \
         "bioc::GenomicRanges", \
         "bioc::ComplexHeatmap" \
     )); \
