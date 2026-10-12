@@ -76,6 +76,8 @@ RUN R -q -e ' \
 
 RUN mkdir -p /workspace && \
     chown rstudio:rstudio /workspace
+    
+RUN echo "session-default-working-dir=/workspace" >> /etc/rstudio/rsession.conf
 
 WORKDIR /workspace
 
